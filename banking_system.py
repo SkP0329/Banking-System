@@ -1,16 +1,42 @@
 import random
 from datetime import datetime
+import json
+from pathlib import Path
+
+DATA_FILE = Path("accounts.txt")
 
 
-# Store all bank accounts
-accounts = {}
+def load_accounts():
+    """Load saved accounts from accounts.txt."""
+    if not DATA_FILE.exists():
+        return {}
+
+    try:
+        with open(DATA_FILE, "r", encoding="utf-8") as file:
+            data = json.load(file)
+
+        # JSON converts dictionary keys to strings, so convert them back to integers.
+        return {int(account_no): details for account_no, details in data.items()}
+
+    except (json.JSONDecodeError, ValueError):
+        print("Warning: accounts.txt is empty or damaged. Starting with no accounts.")
+        return {}
+
+
+def save_accounts():
+    """Save all accounts to accounts.txt."""
+    with open(DATA_FILE, "w", encoding="utf-8") as file:
+        json.dump(accounts, file, indent=4)
+
+
+# Load previously saved accounts when the program starts.
+accounts = load_accounts()
 
 
 def generate_account_number():
     """Generate a unique 6-digit account number."""
     while True:
         account_number = random.randint(100000, 999999)
-
         if account_number not in accounts:
             return account_number
 
@@ -18,9 +44,9 @@ def generate_account_number():
 def create_account():
     print("\n========== CREATE ACCOUNT ==========")
 
-    name = input("Enter your name: ")
-    phone = input("Enter your phone number: ")
-    pin = input("Create a 4-digit PIN: ")
+    name = input("Enter your name: ").strip()
+    phone = input("Enter your phone number: ").strip()
+    pin = input("Create a 4-digit PIN: ").strip()
 
     if len(pin) != 4 or not pin.isdigit():
         print("PIN must contain exactly 4 digits.")
@@ -35,6 +61,8 @@ def create_account():
         "balance": 0.0,
         "transactions": []
     }
+
+    save_accounts()
 
     print("\nAccount created successfully!")
     print("Your Account Number:", account_number)
@@ -64,7 +92,6 @@ def login():
 
 def check_balance(account_number):
     balance = accounts[account_number]["balance"]
-
     print("\n========== ACCOUNT BALANCE ==========")
     print(f"Current Balance: ₹{balance:.2f}")
 
@@ -85,10 +112,11 @@ def deposit(account_number):
     accounts[account_number]["balance"] += amount
 
     time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     accounts[account_number]["transactions"].append(
         f"{time} - Deposited ₹{amount:.2f}"
     )
+
+    save_accounts()
 
     print(f"₹{amount:.2f} deposited successfully.")
     print(f"New Balance: ₹{accounts[account_number]['balance']:.2f}")
@@ -114,10 +142,11 @@ def withdraw(account_number):
     accounts[account_number]["balance"] -= amount
 
     time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     accounts[account_number]["transactions"].append(
         f"{time} - Withdrawn ₹{amount:.2f}"
     )
+
+    save_accounts()
 
     print(f"₹{amount:.2f} withdrawn successfully.")
     print(f"Remaining Balance: ₹{accounts[account_number]['balance']:.2f}")
@@ -162,10 +191,11 @@ def transfer(account_number):
     accounts[account_number]["transactions"].append(
         f"{time} - Transferred ₹{amount:.2f} to Account {receiver}"
     )
-
     accounts[receiver]["transactions"].append(
         f"{time} - Received ₹{amount:.2f} from Account {account_number}"
     )
+
+    save_accounts()
 
     print("Money transferred successfully.")
     print(f"₹{amount:.2f} transferred to Account {receiver}.")
@@ -205,6 +235,7 @@ def change_pin(account_number):
         return
 
     accounts[account_number]["pin"] = new_pin
+    save_accounts()
 
     print("PIN changed successfully.")
 
@@ -227,26 +258,19 @@ def account_menu(account_number):
 
         if choice == "1":
             check_balance(account_number)
-
         elif choice == "2":
             deposit(account_number)
-
         elif choice == "3":
             withdraw(account_number)
-
         elif choice == "4":
             transfer(account_number)
-
         elif choice == "5":
             transaction_history(account_number)
-
         elif choice == "6":
             change_pin(account_number)
-
         elif choice == "7":
             print("\nLogged out successfully.")
             break
-
         else:
             print("Invalid choice. Please try again.")
 
@@ -265,21 +289,16 @@ def main():
 
         if choice == "1":
             create_account()
-
         elif choice == "2":
             account_number = login()
-
             if account_number is not None:
                 account_menu(account_number)
-
         elif choice == "3":
             print("\nThank you for using the Banking System.")
             break
-
         else:
             print("Invalid choice. Please try again.")
 
 
-# Start the program
 if __name__ == "__main__":
     main()
