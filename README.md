@@ -1,47 +1,38 @@
 # Banking System – Mini Project
 
-## Project Overview
-
-This is a Python-based Banking System that simulates basic banking operations through a menu-driven application.
+A Python-based menu-driven banking system.
 
 ## Features
+- Create account
+- Login with account number and PIN
+- Check balance
+- Deposit
+- Withdraw
+- Transfer money
+- Transaction history
+- Change PIN
+- Logout
 
-* Create a bank account
-* Login using Account Number and PIN
-* Check account balance
-* Deposit money
-* Withdraw money
-* Transfer money between accounts
-* View transaction history
-* Change PIN
-* Logout
-
-## Python Concepts Used
-
-* Variables and Data Types
-* Conditional Statements
-* Loops
-* Functions
-* Lists and Dictionaries
-* String Operations
-* Modules
-
-## Python Modules
-
-* `random` – Used to generate account numbers
-* `datetime` – Used to record transaction date and time
+## Data Storage
+Account information and transaction history are saved in `accounts.txt`.
+The file is automatically updated whenever an account or transaction changes.
 
 ## How to Run
 
-1. Install Python.
-2. Download or clone this repository.
-3. Open a terminal in the project folder.
-4. Run:
+Open a terminal in this folder and run:
 
 ```bash
 python banking_system.py
 ```
 
-## Project Objective
+On some systems:
 
-The objective is to combine basic Python programming concepts into a real-world banking application involving account management, authentication, transactions, and transaction records.
+```bash
+py banking_system.py
+```
+
+## Files
+
+- `banking_system.py` – main Python program
+- `accounts.txt` – saved account data
+- `README.md` – project documentation
