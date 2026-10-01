@@ -1,0 +1,9 @@
+{
+    "100001": {
+        "name": "Demo User",
+        "phone": "0000000000",
+        "pin": "1234",
+        "balance": 0.0,
+        "transactions": []
+    }
+}
